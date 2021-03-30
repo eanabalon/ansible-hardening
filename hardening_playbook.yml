@@ -1,3 +1,7 @@
+# @Author: Eduardo Anabalón
+# @Date:   2021-03-26 12:24:20
+# @Last Modified by:   Eduardo Anabalón
+# @Last Modified time: 2021-03-29 23:26:23
 ---
 ###############################################################################
 #                                                                             #
@@ -10,15 +14,14 @@
 #                                                                             #
 ###############################################################################
 
-
- - hosts: all
-   become: true
-   vars:
-      var_sshd_set_keepalive: !!str 0
-      sshd_idle_timeout_value: !!str 900
-      sshd_login_level: "INFO"
-      root_login: "no"
-   tasks:
+- hosts: all
+  become: true
+  vars:
+    var_sshd_set_keepalive: !!str 0
+    sshd_idle_timeout_value: !!str 900
+    sshd_login_level: "INFO"
+    root_login: "no"
+  tasks:
     - name: Enable SSH Warning Banner
       lineinfile:
         create: true
@@ -33,7 +36,7 @@
         - low_complexity
         - low_disruption
         - no_reboot_needed
-    
+
     - name: Allow Only SSH Protocol 2
       lineinfile:
         dest: /etc/ssh/sshd_config
@@ -47,7 +50,7 @@
         - low_complexity
         - low_disruption
         - no_reboot_needed
-    
+
     - name: Set SSH Client Alive Count
       lineinfile:
         create: true
@@ -64,7 +67,7 @@
         - low_disruption
         - no_reboot_needed
         - restart_ssh_service
-    
+
     - name: Disable SSH Root Login
       lineinfile:
         create: true
@@ -81,7 +84,7 @@
         - low_complexity
         - low_disruption
         - no_reboot_needed
-    
+
     - name: Set SSH Idle Timeout Interval
       lineinfile:
         create: true
@@ -96,11 +99,11 @@
         - low_complexity
         - low_disruption
         - no_reboot_needed
-    
+
     - name: Enable service firewalld
       service:
         name: firewalld
-        enabled: 'yes'
+        enabled: "yes"
         state: started
       when: ansible_distribution_major_version >= "7"
       tags:
@@ -110,11 +113,11 @@
         - low_complexity
         - low_disruption
         - no_reboot_needed
-    
+
     - name: Enable service iptables
       service:
         name: iptables
-        enabled: 'yes'
+        enabled: "yes"
         state: started
       when: ansible_distribution_major_version <= "6"
       tags:
@@ -158,8 +161,8 @@
         - low_disruption
         - no_reboot_needed
 
-   handlers:
-     - name: restart sshd
-       service:
-         name: sshd
-         state: restarted
+  handlers:
+    - name: restart sshd
+      service:
+        name: sshd
+        state: restarted

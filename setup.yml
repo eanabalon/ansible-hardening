@@ -1,5 +1,9 @@
+# @Author: Eduardo Anabalón
+# @Date:   2021-03-26 12:24:20
+# @Last Modified by:   Eduardo Anabalón
+# @Last Modified time: 2021-03-29 23:26:18
 ---
-- name: Hosts setup for oscap scan 
+- name: Hosts setup for oscap scan
   hosts: all
   gather_facts: true
   strategy: free
@@ -15,7 +19,7 @@
         - openscap-scanner
         - scap-security-guide
 
-    - name: Copy custom policies 
+    - name: Copy custom policies
       copy:
         src: files/ds/ssg-{{ ansible_distribution }}{{ ansible_distribution_major_version }}-ds-tailoring-custom-lab.xml
         dest: "{{ data_stream_home }}"

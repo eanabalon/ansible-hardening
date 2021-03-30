@@ -1,9 +1,6 @@
 [all]
 # serverx ansible_host=ip
-server1
-server2
-server3
-
+192.168.39.68 ansible_python_interpreter=/usr/bin/python3
 
 #[proxy]
 #server3
