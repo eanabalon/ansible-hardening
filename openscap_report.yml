@@ -1,33 +1,44 @@
 # @Author: Eduardo Anabalón
 # @Date:   2021-03-26 12:24:20
 # @Last Modified by:   Eduardo Anabalón
-# @Last Modified time: 2021-03-29 23:26:20
+# @Last Modified time: 2021-03-30 01:17:11
 ---
 - name: Openscap Report 
   hosts: all
   strategy: free
   become: true
   vars:
-    oscap_profile: xccdf_py.com.miempresa_profile_custom-hardening-lab
+    oscap_profile: xccdf_org.enorchile_profile_ubuntu_server
     data_stream_home: "/usr/share/xml/scap/ssg/content/"
     report_name: "reporte"
   tasks:
     - name: Run scan CentOS
       shell: "oscap xccdf eval --profile {{ oscap_profile }} 
       --report /tmp/{{ inventory_hostname }}-{{ report_name }}.html 
-      --tailoring-file {{ data_stream_home }}ssg-{{ ansible_distribution }}{{ ansible_distribution_major_version }}-ds-tailoring-custom-lab.xml
+      --tailoring-file {{ data_stream_home }}ssg-{{ ansible_distribution }}{{ ansible_distribution_major_version }}-ds-tailoring.xml
                        {{ data_stream_home }}ssg-centos{{ ansible_distribution_major_version }}-ds.xml"
       register: result
-      when: ansible_distribution == "CentOS"
+      when: ansible_distribution == 'CentOS'
       ignore_errors: yes
       failed_when: result.rc >= 3
 
     - name: Run scan RedHat
       shell: "oscap xccdf eval --profile {{ oscap_profile }} 
       --report /tmp/{{ inventory_hostname }}-{{ report_name }}.html 
-      --tailoring-file {{ data_stream_home }}ssg-{{ ansible_distribution }}{{ ansible_distribution_major_version }}-ds-tailoring-custom-lab.xml
+      --tailoring-file {{ data_stream_home }}ssg-{{ ansible_distribution }}{{ ansible_distribution_major_version }}-ds-tailoring.xml
                        {{ data_stream_home }}ssg-rhel{{ ansible_distribution_major_version }}-ds.xml"
-      when: ansible_distribution == "RedHat"
+      when: ansible_distribution == 'RedHat'
+      register: result
+      ignore_errors: yes
+      failed_when: result.rc >= 3
+
+    - name: Run scan Ubuntu16
+      shell: "oscap xccdf eval --profile {{ oscap_profile }} 
+      --report /tmp/{{ inventory_hostname }}-{{ report_name }}.html 
+      --tailoring-file {{ data_stream_home }}ssg-{{ ansible_distribution }}{{ ansible_distribution_major_version }}-ds-tailoring.xml
+                       {{ data_stream_home }}ssg-ubuntu{{ ansible_distribution_major_version }}04-ds.xml"
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '16'
+      register: result
       ignore_errors: yes
       failed_when: result.rc >= 3
 

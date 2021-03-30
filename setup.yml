@@ -1,7 +1,7 @@
 # @Author: Eduardo Anabalón
 # @Date:   2021-03-26 12:24:20
 # @Last Modified by:   Eduardo Anabalón
-# @Last Modified time: 2021-03-29 23:26:18
+# @Last Modified time: 2021-03-30 01:19:44
 ---
 - name: Hosts setup for oscap scan
   hosts: all
@@ -11,15 +11,43 @@
   vars:
     data_stream_home: "/usr/share/xml/scap/ssg/content/"
   tasks:
-    - name: Install necesary packages
+    - name: Install necesary packages (Ubuntu16)
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - libopenscap8
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '16'
+
+    - name: Install necesary packages (Ubuntu18)
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - libopenscap8
+        - ssg-base
+        - ssg-debderived
+        - ssg-debian
+        - ssg-nondebian
+        - ssg-applications
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version >= '18'
+
+    - name: Install necesary packages (Centos)
       package:
         name: "{{ item }}"
         state: present
       loop:
         - openscap-scanner
         - scap-security-guide
+      when: ansible_distribution == 'CentOS'
 
     - name: Copy custom policies
       copy:
-        src: files/ds/ssg-{{ ansible_distribution }}{{ ansible_distribution_major_version }}-ds-tailoring-custom-lab.xml
+        src: files/ds/ssg-{{ ansible_distribution }}{{ ansible_distribution_major_version }}-ds-tailoring.xml
         dest: "{{ data_stream_home }}"
+
+    - name: Copy base policies Ubuntu16
+      copy:
+        src: files/ds/ssg-ubuntu{{ ansible_distribution_major_version }}04-ds.xml
+        dest: "{{ data_stream_home }}"
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '16'
