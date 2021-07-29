@@ -1,7 +1,3 @@
-# @Author: Eduardo Anabalón
-# @Date:   2021-03-26 12:24:20
-# @Last Modified by:   Eduardo Anabalón
-# @Last Modified time: 2021-03-30 01:19:44
 ---
 - name: Hosts setup for oscap scan
   hosts: all
@@ -30,6 +26,7 @@
         - ssg-debian
         - ssg-nondebian
         - ssg-applications
+        - openscap-utils
       when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version >= '18'
 
     - name: Install necesary packages (Centos)
@@ -46,8 +43,7 @@
         src: files/ds/ssg-{{ ansible_distribution }}{{ ansible_distribution_major_version }}-ds-tailoring.xml
         dest: "{{ data_stream_home }}"
 
-    - name: Copy base policies Ubuntu16
+    - name: Copy base policies
       copy:
-        src: files/ds/ssg-ubuntu{{ ansible_distribution_major_version }}04-ds.xml
+        src: files/ds/ssg-{{ ansible_distribution }}{{ ansible_distribution_major_version }}-ds.xml
         dest: "{{ data_stream_home }}"
-      when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '16'

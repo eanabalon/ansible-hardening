@@ -1,0 +1,80 @@
+---
+###############################################################################
+#                                                                             #
+# Ansible Hardening lab                                                       #
+# Target: Ubuntu16 & Ubuntu18                                                 #
+# version: 1.0                                                                #
+#                                                                             #
+# How to apply this playbook:                                                 #
+# $ ansible-playbook -i inventories/[entorno]/hosts hardening.yml             #
+#                                                                             #
+###############################################################################
+
+- hosts: all
+  become: true
+  vars:
+    var_sshd_set_keepalive: !!str 0
+    sshd_idle_timeout_value: !!str 900
+    sshd_login_level: "INFO"
+    root_login: "no"
+    oscap_profile: xccdf_org.ssgproject.content_profile_anssi_np_nt28_average_enorchile
+    data_stream_home: "/usr/share/xml/scap/ssg/content/"
+    report_name: "reporte-remediation"
+  tasks:
+    - name: Enable SSH Warning Banner
+      lineinfile:
+        create: true
+        dest: /etc/ssh/sshd_config
+        regexp: ^Banner
+        line: Banner /etc/issue
+        validate: /usr/sbin/sshd -t -f %s
+      tags:
+        - sshd_enable_warning_banner
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - no_reboot_needed
+
+    - name: Add SSH banner
+      copy:
+        content: "{{ ssh_login_banner }}"
+        dest: /etc/issue
+        owner: root
+        group: root
+      notify: restart sshd
+      tags:
+        - ssh_banner
+        - sshd_enable_warning_banner
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - no_reboot_needed
+
+    - name: Run Remediate Ubuntu16
+      shell: "oscap xccdf eval --remediate --profile {{ oscap_profile }} 
+      --results /tmp/{{ inventory_hostname }}-{{ report_name }}.xml 
+      --tailoring-file {{ data_stream_home }}ssg-{{ ansible_distribution }}{{ ansible_distribution_major_version }}-ds-tailoring.xml
+                       {{ data_stream_home }}ssg-{{ ansible_distribution }}{{ ansible_distribution_major_version }}-ds.xml"
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '16'
+      register: result
+      ignore_errors: yes
+      failed_when: result.rc >= 3
+
+    - name: Copy the report to the ansible master
+      fetch:
+        src: /tmp/{{ inventory_hostname }}-{{ report_name }}.xml
+        dest: "{{ report_dest | default('files') }}/hardening_reports/"
+        flat: yes
+
+    - name: Clean up
+      file:
+        path: /tmp/{{ inventory_hostname }}-{{ report_name }}.xml
+        state: absent
+
+  handlers:
+    - name: restart sshd
+      service:
+        name: sshd
+        state: restarted

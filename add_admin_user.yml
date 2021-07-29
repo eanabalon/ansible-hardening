@@ -1,7 +1,3 @@
-# @Author: Eduardo Anabalón
-# @Date:   2021-03-26 12:24:20
-# @Last Modified by:   Eduardo Anabalón
-# @Last Modified time: 2021-03-30 00:02:09
 ---
 - name: Playbook para agregar usuario ansible
   hosts: all

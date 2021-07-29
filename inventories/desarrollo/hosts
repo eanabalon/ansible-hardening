@@ -2,5 +2,11 @@
 # serverx ansible_host=ip
 192.168.39.68 ansible_python_interpreter=/usr/bin/python3
 
+# GCP - enor-forecast-deliverer
+35.224.90.205 ansible_user=eanabalon ansible_python_interpreter=/usr/bin/python3
+
+# GCP - enor-forecast-generator
+35.223.119.67 ansible_user=eanabalon ansible_python_interpreter=/usr/bin/python3
+
 #[proxy]
 #server3

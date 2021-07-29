@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xccdf:Tailoring xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_scap-workbench_tailoring_default">
   <xccdf:benchmark href="/Applications/scap-workbench.app/Contents/Resources/ssg/ssg-ubuntu1604-ds.xml"/>
-  <xccdf:version time="2021-03-30T00:23:53">1</xccdf:version>
-  <xccdf:Profile id="xccdf_org.enorchile_profile_ubuntu_server" extends="xccdf_org.ssgproject.content_profile_common">
-    <xccdf:title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">Common Profile for General-Purpose Ubuntu Systems [CUSTOMIZED]</xccdf:title>
-    <xccdf:description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">This profile contains items common to general-purpose Ubuntu 1604 installations.</xccdf:description>
+  <xccdf:version time="2021-05-27T22:36:08">1</xccdf:version>
+  <xccdf:Profile id="xccdf_org.ssgproject.content_profile_anssi_np_nt28_average_enorchile" extends="xccdf_org.ssgproject.content_profile_anssi_np_nt28_average">
+    <xccdf:title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">Profile for ANSSI DAT-NT28 Average (Intermediate) Level [CUSTOMIZED]</xccdf:title>
+    <xccdf:description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">This profile contains items for GNU/Linux installations already protected by multiple higher level security stacks.</xccdf:description>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_cron_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_service_cron_enabled" selected="true"/>
   </xccdf:Profile>
 </xccdf:Tailoring>
